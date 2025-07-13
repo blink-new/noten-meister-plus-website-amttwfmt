@@ -1,0 +1,33 @@
+/* App.css - Minimal styles for Notenrechner */
+
+.App {
+  text-align: center;
+}
+
+/* Ensure smooth transitions */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Custom button hover effects */
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+}
+
+/* Card hover effects */
+.card:hover {
+  box-shadow: 0 8px 25px rgb(0 0 0 / 10%);
+}
+
+/* PayPal button specific styling */
+.paypal-button {
+  background: linear-gradient(135deg, #0070ba 0%, #003087 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+}
+
+.paypal-button:hover {
+  background: linear-gradient(135deg, #005ea6 0%, #002973 100%);
+}

@@ -1,0 +1,22 @@
+{
+  "name": "Notenrechner Plus",
+  "short_name": "Notenrechner",
+  "description": "Berechnen Sie Ihre Noten einfach und übersichtlich",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#2563EB",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "de",
+  "scope": "/",
+  "prefer_related_applications": false
+}
