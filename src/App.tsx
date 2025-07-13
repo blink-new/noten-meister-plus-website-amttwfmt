@@ -52,7 +52,7 @@ function App() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
         <Card className="w-full max-w-md">
           <CardContent className="flex items-center justify-center py-12">
             <div className="text-center">
@@ -101,33 +101,33 @@ function App() {
       <div className="w-full max-w-md">
         {/* Hauptkarte */}
         <Card className="mb-6">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold text-slate-800 mb-2">
+          <CardHeader className="text-center px-4 sm:px-6">
+            <CardTitle className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2 break-words">
               Notenrechner
             </CardTitle>
-            <CardDescription className="text-lg text-slate-600">
+            <CardDescription className="text-base sm:text-lg text-slate-600 break-words">
               Berechnen Sie Ihre Noten einfach und übersichtlich
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 px-4 sm:px-6">
             <Button 
               onClick={handleShowAuth}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-sm sm:text-base"
             >
-              <Users className="h-4 w-4 mr-2" />
-              Anmelden / Registrieren
+              <Users className="h-4 w-4 mr-2 flex-shrink-0" />
+              <span className="break-words">Anmelden / Registrieren</span>
             </Button>
             
             <Button 
               onClick={handleContinueWithoutLogin}
               variant="outline"
-              className="w-full py-3 text-slate-700 border-slate-300 hover:bg-slate-100"
+              className="w-full py-3 text-slate-700 border-slate-300 hover:bg-slate-100 text-sm sm:text-base"
             >
-              <Calculator className="h-4 w-4 mr-2" />
-              Ohne Anmeldung fortfahren
+              <Calculator className="h-4 w-4 mr-2 flex-shrink-0" />
+              <span className="break-words">Ohne Anmeldung fortfahren</span>
             </Button>
             
-            <p className="text-sm text-slate-500 text-center mt-4">
+            <p className="text-xs sm:text-sm text-slate-500 text-center mt-4 break-words leading-relaxed">
               Mit einem Konto werden Ihre Daten automatisch gespeichert und synchronisiert
             </p>
           </CardContent>
@@ -135,24 +135,24 @@ function App() {
 
         {/* PayPal Spenden-Karte */}
         <Card className="border-blue-200 bg-blue-50">
-          <CardHeader className="text-center">
-            <CardTitle className="flex items-center justify-center gap-2 text-blue-800">
-              <Heart className="h-5 w-5 text-red-500" />
-              Projekt unterstützen
+          <CardHeader className="text-center px-4 sm:px-6">
+            <CardTitle className="flex items-center justify-center gap-2 text-blue-800 text-base sm:text-lg break-words">
+              <Heart className="h-5 w-5 text-red-500 flex-shrink-0" />
+              <span>Projekt unterstützen</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6">
             <div className="text-center">
-              <p className="text-blue-700 text-sm mb-3">
+              <p className="text-blue-700 text-xs sm:text-sm mb-3 break-words leading-relaxed">
                 Gefällt Ihnen der Notenrechner? Unterstützen Sie die Entwicklung!
               </p>
               <Button 
                 onClick={handlePayPalDonate}
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm"
               >
-                <CreditCard className="h-4 w-4 mr-2" />
-                PayPal Spende
+                <CreditCard className="h-4 w-4 mr-2 flex-shrink-0" />
+                <span className="break-words">PayPal Spende</span>
               </Button>
             </div>
           </CardContent>

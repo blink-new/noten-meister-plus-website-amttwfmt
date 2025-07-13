@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Download, FileText, Globe, Smartphone } from 'lucide-react';
+import { Download, FileText, Globe, Smartphone, Info } from 'lucide-react';
+import { Alert, AlertDescription } from './ui/alert';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { saveAs } from 'file-saver';
 
 interface Grade {
@@ -28,104 +28,130 @@ interface ExportUtilsProps {
 }
 
 export function ExportUtils({ grades, calculateAverage, getSubjects }: ExportUtilsProps) {
+  const [isExporting, setIsExporting] = useState(false);
+  const [showPWAInfo, setShowPWAInfo] = useState(false);
+
   const exportToPDF = async () => {
-    const pdf = new jsPDF();
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const margin = 20;
-    let yPosition = margin;
+    if (grades.length === 0) {
+      alert('Keine Noten zum Exportieren vorhanden!');
+      return;
+    }
 
-    // Header
-    pdf.setFontSize(20);
-    pdf.setTextColor(37, 99, 235); // Blue color
-    pdf.text('Notenrechner Plus - Notenbericht', margin, yPosition);
-    yPosition += 15;
+    setIsExporting(true);
+    try {
+      const pdf = new jsPDF();
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const margin = 20;
+      let yPosition = margin;
 
-    pdf.setFontSize(12);
-    pdf.setTextColor(0, 0, 0);
-    pdf.text(`Erstellt am: ${new Date().toLocaleDateString('de-DE')}`, margin, yPosition);
-    yPosition += 20;
-
-    // Gesamtdurchschnitt
-    pdf.setFontSize(16);
-    pdf.setTextColor(37, 99, 235);
-    pdf.text('Gesamtdurchschnitt', margin, yPosition);
-    yPosition += 10;
-
-    pdf.setFontSize(14);
-    pdf.setTextColor(0, 0, 0);
-    pdf.text(`${calculateAverage().toFixed(2)} (basierend auf ${grades.length} Noten)`, margin, yPosition);
-    yPosition += 20;
-
-    // Fächer-Übersicht
-    pdf.setFontSize(16);
-    pdf.setTextColor(37, 99, 235);
-    pdf.text('Fächer-Übersicht', margin, yPosition);
-    yPosition += 15;
-
-    const subjects = getSubjects();
-    subjects.forEach((subject) => {
-      if (yPosition > 250) {
-        pdf.addPage();
-        yPosition = margin;
-      }
+      // Header
+      pdf.setFontSize(20);
+      pdf.setTextColor(37, 99, 235); // Blue color
+      pdf.text('Notenrechner Plus - Notenbericht', margin, yPosition);
+      yPosition += 15;
 
       pdf.setFontSize(12);
       pdf.setTextColor(0, 0, 0);
-      pdf.text(`${subject.name}: ${subject.average.toFixed(2)} (${subject.grades.length} Noten)`, margin, yPosition);
-      yPosition += 8;
-    });
+      pdf.text(`Erstellt am: ${new Date().toLocaleDateString('de-DE')}`, margin, yPosition);
+      yPosition += 20;
 
-    // Detaillierte Notenliste
-    if (grades.length > 0) {
-      yPosition += 10;
-      if (yPosition > 230) {
-        pdf.addPage();
-        yPosition = margin;
-      }
-
+      // Gesamtdurchschnitt
       pdf.setFontSize(16);
       pdf.setTextColor(37, 99, 235);
-      pdf.text('Detaillierte Notenliste', margin, yPosition);
+      pdf.text('Gesamtdurchschnitt', margin, yPosition);
+      yPosition += 10;
+
+      pdf.setFontSize(14);
+      pdf.setTextColor(0, 0, 0);
+      const average = calculateAverage();
+      pdf.text(`${average.toFixed(2)} (basierend auf ${grades.length} Noten)`, margin, yPosition);
+      yPosition += 20;
+
+      // Fächer-Übersicht
+      pdf.setFontSize(16);
+      pdf.setTextColor(37, 99, 235);
+      pdf.text('Fächer-Übersicht', margin, yPosition);
       yPosition += 15;
 
-      grades.forEach((grade) => {
+      const subjects = getSubjects();
+      subjects.forEach((subject) => {
         if (yPosition > 250) {
           pdf.addPage();
           yPosition = margin;
         }
 
-        pdf.setFontSize(10);
+        pdf.setFontSize(12);
         pdf.setTextColor(0, 0, 0);
-        const gradeText = `${grade.subject} - Note: ${grade.grade.toFixed(1)} (Gewichtung: ${grade.weight}x)`;
-        pdf.text(gradeText, margin, yPosition);
-        yPosition += 6;
-
-        if (grade.notes) {
-          pdf.setFontSize(8);
-          pdf.setTextColor(100, 100, 100);
-          pdf.text(`Notiz: ${grade.notes}`, margin + 10, yPosition);
-          yPosition += 6;
-        }
-        yPosition += 2;
+        pdf.text(`${subject.name}: ${subject.average.toFixed(2)} (${subject.grades.length} Noten)`, margin, yPosition);
+        yPosition += 8;
       });
-    }
 
-    // Footer
-    const pageCount = pdf.internal.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
-      pdf.setPage(i);
-      pdf.setFontSize(8);
-      pdf.setTextColor(100, 100, 100);
-      pdf.text(`Seite ${i} von ${pageCount} - Erstellt mit Notenrechner Plus`, margin, 285);
-    }
+      // Detaillierte Notenliste
+      if (grades.length > 0) {
+        yPosition += 10;
+        if (yPosition > 230) {
+          pdf.addPage();
+          yPosition = margin;
+        }
 
-    pdf.save(`Notenbericht_${new Date().toISOString().split('T')[0]}.pdf`);
+        pdf.setFontSize(16);
+        pdf.setTextColor(37, 99, 235);
+        pdf.text('Detaillierte Notenliste', margin, yPosition);
+        yPosition += 15;
+
+        grades.forEach((grade) => {
+          if (yPosition > 250) {
+            pdf.addPage();
+            yPosition = margin;
+          }
+
+          pdf.setFontSize(10);
+          pdf.setTextColor(0, 0, 0);
+          const gradeText = `${grade.subject} - Note: ${grade.grade.toFixed(1)} (Gewichtung: ${grade.weight}x)`;
+          pdf.text(gradeText, margin, yPosition);
+          yPosition += 6;
+
+          if (grade.notes) {
+            pdf.setFontSize(8);
+            pdf.setTextColor(100, 100, 100);
+            const noteLines = pdf.splitTextToSize(`Notiz: ${grade.notes}`, pageWidth - 2 * margin);
+            pdf.text(noteLines, margin + 10, yPosition);
+            yPosition += noteLines.length * 4;
+          }
+          yPosition += 2;
+        });
+      }
+
+      // Footer
+      const pageCount = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(8);
+        pdf.setTextColor(100, 100, 100);
+        pdf.text(`Seite ${i} von ${pageCount} - Erstellt mit Notenrechner Plus`, margin, 285);
+      }
+
+      pdf.save(`Notenbericht_${new Date().toISOString().split('T')[0]}.pdf`);
+    } catch (error) {
+      console.error('PDF Export Error:', error);
+      alert('Fehler beim PDF-Export. Bitte versuchen Sie es erneut.');
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const exportToHTML = () => {
-    const subjects = getSubjects();
-    const htmlContent = `
-<!DOCTYPE html>
+    if (grades.length === 0) {
+      alert('Keine Noten zum Exportieren vorhanden!');
+      return;
+    }
+
+    setIsExporting(true);
+    try {
+      const subjects = getSubjects();
+      const average = calculateAverage();
+      
+      const htmlContent = `<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -235,7 +261,7 @@ export function ExportUtils({ grades, calculateAverage, getSubjects }: ExportUti
     <div class="section">
         <h2>🎯 Gesamtdurchschnitt</h2>
         <div class="average-box">
-            <div class="number">${calculateAverage().toFixed(2)}</div>
+            <div class="number">${average.toFixed(2)}</div>
             <p>Basierend auf ${grades.length} Noten</p>
         </div>
     </div>
@@ -284,73 +310,119 @@ export function ExportUtils({ grades, calculateAverage, getSubjects }: ExportUti
 </body>
 </html>`;
 
-    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-    saveAs(blob, `Notenbericht_${new Date().toISOString().split('T')[0]}.html`);
-  };
-
-  const installPWA = () => {
-    // Check if PWA can be installed
-    if ('serviceWorker' in navigator) {
-      // Show install prompt or instructions
-      alert('Diese App kann als PWA installiert werden! Nutzen Sie das "Zum Startbildschirm hinzufügen" Menü in Ihrem Browser.');
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+      saveAs(blob, `Notenbericht_${new Date().toISOString().split('T')[0]}.html`);
+    } catch (error) {
+      console.error('HTML Export Error:', error);
+      alert('Fehler beim HTML-Export. Bitte versuchen Sie es erneut.');
+    } finally {
+      setIsExporting(false);
     }
   };
 
   return (
-    <Card className="border-blue-200 bg-blue-50">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-blue-800">
-          <Download className="h-5 w-5" />
-          Export & PWA Funktionen
-        </CardTitle>
-        <CardDescription className="text-blue-700">
-          Exportieren Sie Ihre Noten oder installieren Sie die App
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          <Button 
-            onClick={exportToPDF}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-            disabled={grades.length === 0}
-          >
-            <FileText className="h-4 w-4 mr-2" />
-            PDF Export
-          </Button>
+    <div className="space-y-6">
+      {/* Export Funktionen */}
+      <Card className="border-blue-200 bg-blue-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-blue-800">
+            <Download className="h-5 w-5" />
+            Export Funktionen
+          </CardTitle>
+          <CardDescription className="text-blue-700">
+            Exportieren Sie Ihre Noten als PDF oder HTML-Datei
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Button 
+              onClick={exportToPDF}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              disabled={grades.length === 0 || isExporting}
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              {isExporting ? 'Exportiere...' : 'PDF Export'}
+            </Button>
+            
+            <Button 
+              onClick={exportToHTML}
+              className="bg-blue-500 hover:bg-blue-600 text-white"
+              disabled={grades.length === 0 || isExporting}
+            >
+              <Globe className="h-4 w-4 mr-2" />
+              {isExporting ? 'Exportiere...' : 'HTML Export'}
+            </Button>
+          </div>
           
-          <Button 
-            onClick={exportToHTML}
-            className="bg-blue-500 hover:bg-blue-600 text-white"
-            disabled={grades.length === 0}
-          >
-            <Globe className="h-4 w-4 mr-2" />
-            HTML Export
-          </Button>
-          
-          <Button 
-            onClick={installPWA}
-            className="bg-blue-700 hover:bg-blue-800 text-white"
-          >
-            <Smartphone className="h-4 w-4 mr-2" />
-            PWA installieren
-          </Button>
-          
-          <Button 
-            onClick={() => window.print()}
-            variant="outline"
-            className="border-blue-300 text-blue-700 hover:bg-blue-100"
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Drucken
-          </Button>
-        </div>
-        
-        {grades.length === 0 && (
-          <p className="text-sm text-blue-600 mt-3 text-center">
-            💡 Fügen Sie Noten hinzu, um Export-Funktionen zu nutzen
-          </p>
-        )}
-      </CardContent>
-    </Card>
+          {grades.length === 0 && (
+            <p className="text-sm text-blue-600 mt-3 text-center">
+              💡 Fügen Sie Noten hinzu, um Export-Funktionen zu nutzen
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* PWA Installation */}
+      <Card className="border-green-200 bg-green-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-green-800">
+            <Smartphone className="h-5 w-5" />
+            Progressive Web App (PWA)
+          </CardTitle>
+          <CardDescription className="text-green-700">
+            Installieren Sie den Notenrechner als App auf Ihrem Gerät
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button 
+              onClick={() => setShowPWAInfo(!showPWAInfo)}
+              variant="outline"
+              className="border-green-300 text-green-700 hover:bg-green-100"
+            >
+              <Info className="h-4 w-4 mr-2" />
+              Was ist eine PWA?
+            </Button>
+            
+            <Button 
+              onClick={() => {
+                if ('serviceWorker' in navigator) {
+                  alert('Um diese App zu installieren:\\n\\n1. Klicken Sie auf das Menü Ihres Browsers (⋮)\\n2. Wählen Sie "App installieren" oder "Zum Startbildschirm hinzufügen"\\n3. Bestätigen Sie die Installation\\n\\nDie App wird dann wie eine normale App auf Ihrem Gerät verfügbar sein!');
+                } else {
+                  alert('Ihr Browser unterstützt keine PWA-Installation.');
+                }
+              }}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              <Smartphone className="h-4 w-4 mr-2" />
+              App installieren
+            </Button>
+          </div>
+
+          {showPWAInfo && (
+            <Alert className="border-green-200 bg-green-50">
+              <Info className="h-4 w-4" />
+              <AlertDescription className="text-green-800">
+                <strong>Was ist eine Progressive Web App (PWA)?</strong>
+                <br /><br />
+                Eine PWA ist eine moderne Web-Technologie, die es ermöglicht, Websites wie normale Apps zu nutzen:
+                <br /><br />
+                <strong>Vorteile:</strong>
+                <ul className="list-disc list-inside mt-2 space-y-1">
+                  <li>📱 <strong>App-ähnliche Erfahrung:</strong> Funktioniert wie eine normale App auf Ihrem Handy oder Computer</li>
+                  <li>🚀 <strong>Schneller Start:</strong> Lädt schneller als normale Websites</li>
+                  <li>📶 <strong>Offline-Nutzung:</strong> Funktioniert auch ohne Internetverbindung (teilweise)</li>
+                  <li>🔔 <strong>Benachrichtigungen:</strong> Kann Ihnen wichtige Updates senden</li>
+                  <li>💾 <strong>Weniger Speicher:</strong> Braucht viel weniger Platz als normale Apps</li>
+                  <li>🔄 <strong>Automatische Updates:</strong> Immer die neueste Version ohne manuelles Update</li>
+                </ul>
+                <br />
+                <strong>So installieren Sie die App:</strong> Nutzen Sie die Funktion "Zum Startbildschirm hinzufügen" in Ihrem Browser-Menü.
+              </AlertDescription>
+            </Alert>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }

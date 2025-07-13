@@ -201,61 +201,68 @@ export function GradeCalculator({ onBack, isAuthenticated }: GradeCalculatorProp
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4">
+    <div className="min-h-screen bg-slate-50 p-2 sm:p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold text-slate-800 mb-2">Notenrechner</h1>
-            <p className="text-slate-600">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
+          <div className="w-full sm:w-auto">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800 mb-2 break-words">
+              Notenrechner
+            </h1>
+            <p className="text-slate-600 text-sm sm:text-base break-words leading-relaxed">
               {isAuthenticated && user ? 
                 `Willkommen zurück, ${user.email}!` : 
                 'Berechnen Sie Ihre Noten einfach und übersichtlich'
               }
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             {isAuthenticated && (
               <Button 
                 variant="outline" 
                 onClick={handleLogout}
-                className="text-slate-600"
+                className="text-slate-600 text-sm w-full sm:w-auto"
               >
-                <LogOut className="h-4 w-4 mr-2" />
-                Abmelden
+                <LogOut className="h-4 w-4 mr-2 flex-shrink-0" />
+                <span className="break-words">Abmelden</span>
               </Button>
             )}
             <Button 
               variant="outline" 
               onClick={onBack}
-              className="text-slate-600"
+              className="text-slate-600 text-sm w-full sm:w-auto"
             >
-              Zurück
+              <span className="break-words">Zurück</span>
             </Button>
           </div>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="calculator" className="flex items-center gap-2">
-              <Calculator className="h-4 w-4" />
-              Rechner
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 mb-6">
+            <TabsTrigger value="calculator" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Calculator className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+              <span className="hidden sm:inline">Rechner</span>
+              <span className="sm:hidden">Rechner</span>
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Analyse
+            <TabsTrigger value="analytics" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+              <span className="hidden sm:inline">Analyse</span>
+              <span className="sm:hidden">Analyse</span>
             </TabsTrigger>
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4" />
-              Übersicht
+            <TabsTrigger value="overview" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <BookOpen className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+              <span className="hidden sm:inline">Übersicht</span>
+              <span className="sm:hidden">Übersicht</span>
             </TabsTrigger>
-            <TabsTrigger value="classrooms" className="flex items-center gap-2" disabled={!isAuthenticated}>
-              <Users className="h-4 w-4" />
-              Klassenzimmer
+            <TabsTrigger value="classrooms" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm" disabled={!isAuthenticated}>
+              <Users className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+              <span className="hidden sm:inline">Klassenzimmer</span>
+              <span className="sm:hidden">Klassen</span>
             </TabsTrigger>
-            <TabsTrigger value="export" className="flex items-center gap-2">
-              <Download className="h-4 w-4" />
-              Export
+            <TabsTrigger value="export" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Download className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+              <span className="hidden sm:inline">Export</span>
+              <span className="sm:hidden">Export</span>
             </TabsTrigger>
           </TabsList>
 
@@ -263,28 +270,29 @@ export function GradeCalculator({ onBack, isAuthenticated }: GradeCalculatorProp
             {/* Neue Note hinzufügen */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Plus className="h-5 w-5" />
-                  Neue Note hinzufügen
+                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                  <Plus className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                  <span className="break-words">Neue Note hinzufügen</span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm break-words leading-relaxed">
                   Geben Sie Ihre Note ein und sie wird automatisch in die Berechnung einbezogen
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="subject">Fach</Label>
+                    <Label htmlFor="subject" className="text-sm">Fach</Label>
                     <Input
                       id="subject"
                       placeholder="z.B. Mathematik"
                       value={newGrade.subject}
                       onChange={(e) => setNewGrade({ ...newGrade, subject: e.target.value })}
+                      className="text-sm"
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="grade">Note (1-6)</Label>
+                    <Label htmlFor="grade" className="text-sm">Note (1-6)</Label>
                     <Input
                       id="grade"
                       type="number"
@@ -294,13 +302,14 @@ export function GradeCalculator({ onBack, isAuthenticated }: GradeCalculatorProp
                       placeholder="z.B. 2.3"
                       value={newGrade.grade}
                       onChange={(e) => setNewGrade({ ...newGrade, grade: e.target.value })}
+                      className="text-sm"
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="weight">Gewichtung</Label>
+                    <Label htmlFor="weight" className="text-sm">Gewichtung</Label>
                     <Select value={newGrade.weight} onValueChange={(value) => setNewGrade({ ...newGrade, weight: value })}>
-                      <SelectTrigger>
+                      <SelectTrigger className="text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -313,9 +322,9 @@ export function GradeCalculator({ onBack, isAuthenticated }: GradeCalculatorProp
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="examType">Typ</Label>
+                    <Label htmlFor="examType" className="text-sm">Typ</Label>
                     <Select value={newGrade.examType} onValueChange={(value) => setNewGrade({ ...newGrade, examType: value })}>
-                      <SelectTrigger>
+                      <SelectTrigger className="text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -330,9 +339,9 @@ export function GradeCalculator({ onBack, isAuthenticated }: GradeCalculatorProp
                 </div>
                 
                 <div className="mt-4">
-                  <Button onClick={addGrade} className="bg-blue-600 hover:bg-blue-700">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Note hinzufügen
+                  <Button onClick={addGrade} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto text-sm">
+                    <Plus className="h-4 w-4 mr-2 flex-shrink-0" />
+                    <span className="break-words">Note hinzufügen</span>
                   </Button>
                 </div>
               </CardContent>
@@ -341,11 +350,11 @@ export function GradeCalculator({ onBack, isAuthenticated }: GradeCalculatorProp
             {/* Notenliste */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5" />
-                  Ihre Noten
+                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                  <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                  <span className="break-words">Ihre Noten</span>
                   {grades.length > 0 && (
-                    <Badge variant="secondary" className="ml-2">
+                    <Badge variant="secondary" className="ml-2 text-xs">
                       {grades.length} Noten
                     </Badge>
                   )}
@@ -354,27 +363,27 @@ export function GradeCalculator({ onBack, isAuthenticated }: GradeCalculatorProp
               <CardContent>
                 {grades.length === 0 ? (
                   <div className="text-center py-8 text-slate-500">
-                    <Calculator className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                    <p>Noch keine Noten eingetragen</p>
-                    <p className="text-sm">Fügen Sie Ihre erste Note hinzu, um zu beginnen</p>
+                    <Calculator className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-4 opacity-50" />
+                    <p className="text-sm sm:text-base break-words">Noch keine Noten eingetragen</p>
+                    <p className="text-xs sm:text-sm break-words">Fügen Sie Ihre erste Note hinzu, um zu beginnen</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {grades.map((grade) => (
-                      <div key={grade.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3">
-                            <span className="font-medium text-slate-800">{grade.subject}</span>
+                      <div key={grade.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-slate-50 rounded-lg gap-3">
+                        <div className="flex-1 w-full">
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                            <span className="font-medium text-slate-800 text-sm sm:text-base break-words">{grade.subject}</span>
                             <Badge 
                               variant={grade.grade <= 2 ? "default" : grade.grade <= 3 ? "secondary" : "destructive"}
-                              className="text-sm"
+                              className="text-xs sm:text-sm"
                             >
                               {grade.grade.toFixed(1)}
                             </Badge>
-                            <span className="text-sm text-slate-500">
+                            <span className="text-xs sm:text-sm text-slate-500 break-words">
                               Gewichtung: {grade.weight}x
                             </span>
-                            <span className="text-sm text-slate-500">
+                            <span className="text-xs sm:text-sm text-slate-500 break-words">
                               {grade.examType === 'exam' ? 'Klausur' : 
                                grade.examType === 'homework' ? 'Hausaufgabe' :
                                grade.examType === 'presentation' ? 'Präsentation' :
@@ -382,16 +391,17 @@ export function GradeCalculator({ onBack, isAuthenticated }: GradeCalculatorProp
                             </span>
                           </div>
                           {grade.notes && (
-                            <p className="text-sm text-slate-600 mt-1">{grade.notes}</p>
+                            <p className="text-xs sm:text-sm text-slate-600 mt-1 break-words">{grade.notes}</p>
                           )}
                         </div>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => deleteGrade(grade.id)}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 w-full sm:w-auto"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4 mr-2 sm:mr-0 flex-shrink-0" />
+                          <span className="sm:hidden">Löschen</span>
                         </Button>
                       </div>
                     ))}
@@ -535,30 +545,30 @@ export function GradeCalculator({ onBack, isAuthenticated }: GradeCalculatorProp
         {/* PayPal Spenden-Sektion - Position 175px */}
         <Card className="border-blue-200 bg-blue-50 mt-8 endnote-175">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-blue-800">
-              <Heart className="h-5 w-5 text-red-500" />
-              Unterstützen Sie das Projekt
+            <CardTitle className="flex flex-col sm:flex-row items-center gap-2 text-blue-800 text-lg sm:text-xl">
+              <Heart className="h-5 w-5 text-red-500 flex-shrink-0" />
+              <span className="break-words text-center sm:text-left">Unterstützen Sie das Projekt</span>
             </CardTitle>
-            <CardDescription className="text-blue-700">
+            <CardDescription className="text-blue-700 text-sm break-words leading-relaxed text-center sm:text-left">
               Helfen Sie uns, den Notenrechner weiterzuentwickeln
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-center">
-              <p className="text-blue-700 mb-4">
+              <p className="text-blue-700 mb-4 text-sm break-words leading-relaxed">
                 Wenn Ihnen der Notenrechner gefällt, können Sie uns gerne mit einer kleinen Spende unterstützen.
               </p>
               <Button 
                 onClick={handlePayPalDonate}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 text-sm w-full sm:w-auto"
               >
-                <CreditCard className="h-4 w-4 mr-2" />
-                Mit PayPal spenden
+                <CreditCard className="h-4 w-4 mr-2 flex-shrink-0" />
+                <span className="break-words">Mit PayPal spenden</span>
               </Button>
-              <p className="text-sm text-blue-600 mt-2">
+              <p className="text-xs sm:text-sm text-blue-600 mt-2 break-words">
                 Sicher über PayPal - notenmeisterplus
               </p>
-              <Badge className="mt-2 endnote-175" variant="outline">
+              <Badge className="mt-2 endnote-175 text-xs" variant="outline">
                 Endnote Badge - Position 175
               </Badge>
             </div>
